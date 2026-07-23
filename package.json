@@ -1,6 +1,6 @@
 {
   "name": "@atlanticrev/atl-utils",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": false,
   "description": "Framework-agnostic TypeScript utility library for personal projects",
   "license": "UNLICENSED",
@@ -43,6 +43,14 @@
       "types": "./dist/http/index.d.ts",
       "import": "./dist/http/index.js"
     },
+    "./lifecycle": {
+      "types": "./dist/lifecycle/index.d.ts",
+      "import": "./dist/lifecycle/index.js"
+    },
+    "./view-model": {
+      "types": "./dist/view-model/index.d.ts",
+      "import": "./dist/view-model/index.js"
+    },
     "./*": {
       "types": "./dist/*.d.ts",
       "import": "./dist/*.js"
@@ -67,8 +75,9 @@
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest",
     "check": "pnpm lint && pnpm typecheck && pnpm test && pnpm build",
-    "pack:check": "pnpm build && publint && attw --pack .",
-    "release:patch": "pnpm build && npm version patch && npm publish"
+    "pack:check": "pnpm build && publint && attw --pack . --profile esm-only",
+    "release:check": "pnpm check && pnpm pack:check",
+    "prepublishOnly": "pnpm release:check"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.2",

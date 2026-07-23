@@ -10,6 +10,8 @@
 - `date-and-time` — утилиты даты/времени
 - `storages` — browser storage adapters (cookie, local/session, Cache Storage, IndexedDB)
 - `http` — adapter-based HTTP client (`fetch` + `xhr`)
+- `lifecycle` — cancellation and cleanup scopes for screens and controllers
+- `view-model` — lightweight MVVM state and lifecycle built on `EventTarget`
 
 Рекомендация по импортам:
 - Для максимального tree-shaking используй leaf imports:

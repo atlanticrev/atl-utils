@@ -35,6 +35,13 @@ src/
     adapters/
       fetch.ts
       xhr.ts
+  lifecycle/
+    index.ts
+    create-lifecycle-scope.ts
+  view-model/
+    index.ts
+    change-event.ts
+    view-model.ts
   date-and-time/
     index.ts
     format-date.ts
@@ -68,6 +75,8 @@ Category barrels are also available:
 import { clsx } from '@atlanticrev/atl-utils/styles'
 import { createLocalStorageStore } from '@atlanticrev/atl-utils/storages'
 import { createHttpClient } from '@atlanticrev/atl-utils/http'
+import { createLifecycleScope } from '@atlanticrev/atl-utils/lifecycle'
+import { ViewModel } from '@atlanticrev/atl-utils/view-model'
 ```
 
 Root barrel works too, but subpaths are better for explicit imports:
@@ -75,6 +84,39 @@ Root barrel works too, but subpaths are better for explicit imports:
 ```ts
 import { clsx, formatDate } from '@atlanticrev/atl-utils'
 ```
+
+## View model and lifecycle
+
+`/view-model` provides lightweight MVVM state built on `EventTarget`. It changes individual properties or an atomic
+property batch without replacing the entire state object. `/lifecycle` combines an `AbortSignal` with deterministic
+cleanup callbacks and child scopes.
+
+```ts
+import { createLifecycleScope } from '@atlanticrev/atl-utils/lifecycle'
+import { ViewModel } from '@atlanticrev/atl-utils/view-model'
+
+const lifecycle = createLifecycleScope()
+
+class LoadingViewModel extends ViewModel<{ loading: boolean }> {
+  public constructor() {
+    super({ loading: false })
+  }
+
+  public start(): void {
+    this.setProperty('loading', true)
+  }
+}
+
+const viewModel = new LoadingViewModel()
+
+viewModel.observe(() => console.log(viewModel.state), {
+  signal: lifecycle.signal,
+})
+viewModel.start()
+```
+
+The modules intentionally do not provide routing, DOM rendering, proxies, automatic dependency tracking, or
+framework-specific hooks.
 
 ## Scripts
 
@@ -150,19 +192,22 @@ const result = await http.post<{ id: string }>('/users', { name: 'Alex' }, {
 
 Before publishing:
 
-- run `pnpm install` and commit `pnpm-lock.yaml`
-- bump version (`npm version patch`)
+- make sure the intended version is committed in `package.json`
+- run `pnpm release:check`
 - make sure `GITHUB_TOKEN` has access to `write:packages`
 
-Manual publish:
+Manual publish from `zsh` without writing the PAT to shell history:
 
 ```bash
-export GITHUB_TOKEN=YOUR_GITHUB_PACKAGES_TOKEN
-pnpm build
+read -s "GITHUB_TOKEN?GitHub Packages PAT: "
+echo
+export GITHUB_TOKEN
+npm whoami --registry=https://npm.pkg.github.com
 npm publish
+unset GITHUB_TOKEN
 ```
 
-For a one-command release, use `pnpm release:patch`.
+`npm publish` automatically repeats the complete release quality gate through `prepublishOnly`.
 
 The repo also includes a GitHub Actions publish workflow
 (`.github/workflows/publish.yml`) that uses `GITHUB_TOKEN`.
