@@ -4,6 +4,10 @@
   "private": false,
   "description": "Framework-agnostic TypeScript utility library for personal projects",
   "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/atlanticrev/atl-utils.git"
+  },
   "type": "module",
   "sideEffects": false,
   "files": ["dist"],
@@ -61,7 +65,8 @@
     "node": ">=18.18"
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
   },
   "packageManager": "pnpm@10.6.0",
   "scripts": {

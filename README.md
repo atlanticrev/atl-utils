@@ -47,18 +47,13 @@ src/
     format-date.ts
 ```
 
-## Install in another project (GitHub Packages)
+## Install in another project
 
 ```bash
 pnpm add @atlanticrev/atl-utils
 ```
 
-Consumer project `.npmrc`:
-
-```ini
-@atlanticrev:registry=https://npm.pkg.github.com
-//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
-```
+The package is public on npmjs.com. No GitHub token or scoped registry mapping is needed.
 
 ## Usage
 
@@ -188,26 +183,22 @@ const result = await http.post<{ id: string }>('/users', { name: 'Alex' }, {
 })
 ```
 
-## Publish (GitHub Packages)
+## Publish (npmjs.com)
 
 Before publishing:
 
 - make sure the intended version is committed in `package.json`
 - run `pnpm release:check`
-- make sure `GITHUB_TOKEN` has access to `write:packages`
+- sign in to npmjs.com with an account that can publish under `@atlanticrev`
 
-Manual publish from `zsh` without writing the PAT to shell history:
+For the first release, publish manually:
 
 ```bash
-read -s "GITHUB_TOKEN?GitHub Packages PAT: "
-echo
-export GITHUB_TOKEN
-npm whoami --registry=https://npm.pkg.github.com
-npm publish
-unset GITHUB_TOKEN
+npm whoami --registry=https://registry.npmjs.org
+npm publish --access public
 ```
 
 `npm publish` automatically repeats the complete release quality gate through `prepublishOnly`.
 
-The repo also includes a GitHub Actions publish workflow
-(`.github/workflows/publish.yml`) that uses `GITHUB_TOKEN`.
+After the first release, configure npm trusted publishing for `.github/workflows/publish.yml` and use that
+workflow for later releases without a long-lived publish token.
